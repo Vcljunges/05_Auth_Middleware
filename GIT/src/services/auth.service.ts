@@ -1,24 +1,29 @@
-import { UserService } from "./user.services.js"
+import { UserService } from "./user.service.js"
 import bcrypt from "bcrypt"
-const userService = new UserService()
 import jwt from "jsonwebtoken"
+
+const userService = new UserService()
+
+class AppError extends Error {
+    public status: number;
+    constructor(message: string, status: number) {
+        super(message);
+        this.status = status;
+    }
+}
 
 export class AuthService {
     async authenticate(jwtSecret: string, email: string, password: string) {
         const user = await userService.findByEmail(email)
 
         if (!user) {
-            const err = new Error("Credenciais inválidos")
-            err.status = 401
-            throw err
+            throw new AppError("Credenciais inválidos", 401)
         }
 
         const validPassword = await bcrypt.compare(password, user.password)
 
         if (!validPassword) {
-            const err = new Error("Credenciais inválidos")
-            err.status = 401
-            throw err
+            throw new AppError("Credenciais inválidos", 401)
         }
 
         //criar o Secret no .env

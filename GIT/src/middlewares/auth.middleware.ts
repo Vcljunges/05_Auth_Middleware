@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
-import { UserService } from "../services/user.services.js"
+import { UserService } from "../services/user.service.js"
 
 const userService = new UserService()
 

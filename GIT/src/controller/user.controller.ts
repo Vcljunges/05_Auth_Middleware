@@ -1,5 +1,5 @@
 import type { Request, Response } from "express"
-import { UserService } from "../services/user.services.js"
+import { UserService } from "../services/user.service.js"
 
 const userService = new UserService()
 
@@ -9,7 +9,7 @@ export class UserController {
             const users = await userService.findAll()
             return res.json(users)
         } catch (err) {
-            res.status(400).json({ error: err.message })
+            res.status(400).json({ error: (err as Error).message })
             console.error(err)
         }
     }
@@ -32,6 +32,10 @@ export class UserController {
     async create(req: Request, res: Response) {
         try {
             const { name, email, password, role } = req.body
+
+            if (!name || !email || !password) {
+                return res.status(400).json({ error: "Os campos name, email e password são obrigatórios." })
+            }
             // const name = req.body.name?.trim() || null
             // const email = sanitizeEmail(req.body.email)
             // const password = String(req.body.password || "")
@@ -47,7 +51,7 @@ export class UserController {
 
             res.status(201).json(user)
         } catch (err) {
-            res.status(400).json({ error: err.message })
+            res.status(400).json({ error: (err as Error).message })
         }
     }
 
